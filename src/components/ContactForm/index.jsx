@@ -1,57 +1,56 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Form, Input, Button } from './ContactForm.styled';
 
-const INITIAL_STATE = {
-  name: '',
-  number: '',
-};
+const ContactForm = ({ createContact }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-class ContactForm extends Component {
-  state = { ...INITIAL_STATE };
+  const nameInputId = nanoid();
+  const numberInputId = nanoid();
 
-  nameInputId = nanoid();
-  numberInputId = nanoid();
-
-  handleChange = ({ target: { value, name } }) => {
-    this.setState({ [name]: value });
+  const handleChange = ({ target: { value, name } }) => {
+    if (name === 'name') {
+      setName(value);
+    } else {
+      setNumber(value);
+    }
   };
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    this.props.createContact({ ...this.state });
-    this.setState(INITIAL_STATE);
+    createContact({ name, number });
+    setName('');
+    setNumber('');
   };
 
-  render() {
-    return (
-      <Form onSubmit={this.handleSubmit}>
-        <label htmlFor={this.nameInputId}>Name</label>
-        <Input
-          onChange={this.handleChange}
-          value={this.state.name}
-          id={this.nameInputId}
-          type="text"
-          name="name"
-          pattern="[A-Za-z]{1,32}"
-          title="Name may contain only letters. For example Adrian, Jacob."
-          required
-        />
-        <label htmlFor={this.numberInputId}>Number</label>
-        <Input
-          onChange={this.handleChange}
-          value={this.state.number}
-          id={this.numberInputId}
-          type="tel"
-          name="number"
-          pattern="[0-9]{1,32}"
-          title="Phone number must be digits"
-          required
-        />
-        <Button type="submit">Add contact</Button>
-      </Form>
-    );
-  }
-}
+  return (
+    <Form onSubmit={handleSubmit}>
+      <label htmlFor={nameInputId}>Name</label>
+      <Input
+        onChange={handleChange}
+        value={name}
+        id={nameInputId}
+        type="text"
+        name="name"
+        pattern="[A-Za-z]{1,32}"
+        title="Name may contain only letters. For example Adrian, Jacob."
+        required
+      />
+      <label htmlFor={numberInputId}>Number</label>
+      <Input
+        onChange={handleChange}
+        value={number}
+        id={numberInputId}
+        type="tel"
+        name="number"
+        pattern="[0-9]{1,32}"
+        title="Phone number must be digits"
+        required
+      />
+      <Button type="submit">Add contact</Button>
+    </Form>
+  );
+};
 
 export default ContactForm;
